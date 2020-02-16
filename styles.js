@@ -10,4 +10,12 @@ export default styles = StyleSheet.create({
         textAlign : 'center',
         color: 'rgba(226, 226, 226, 1)', 
     },
+    notEditableOverlay: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        opacity: 0,
+    }
 })

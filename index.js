@@ -17,7 +17,9 @@ export default class OTPInputView extends Component {
         keyboardType: PropTypes.string,
         clearInputs: PropTypes.bool,
         placeholderCharacter: PropTypes.string,
-        placeholderTextColor: PropTypes.string
+        placeholderTextColor: PropTypes.string,
+        editable: PropTypes.bool,
+        allowFontScaling: PropTypes.bool,
     }
 
     static defaultProps = {
@@ -31,6 +33,8 @@ export default class OTPInputView extends Component {
         clearInputs: false,
         placeholderCharacter: "",
         placeholderTextColor: null,
+        editable: true,
+        allowFontScaling: true,
     }
 
     fields = []
@@ -44,7 +48,7 @@ export default class OTPInputView extends Component {
         }
     }
 
-    componentWillReceiveProps(nextProps) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
         const { code } = this.props
         if (nextProps.code !== code) {
             this.setState({ digits: (nextProps.code === undefined ? [] : nextProps.code.split("")) })
@@ -156,7 +160,7 @@ export default class OTPInputView extends Component {
 
     handleKeyPressTextInput = (index, key) => {
         const digits = this.getDigits()
-        if (key === 'Backspace') {
+        if (key === 'Backspace' && this.props.editable) {
             if (!digits[index] && index > 0) {
                 this.handleChangeText(index - 1, '')
                 this.focusField(index - 1)
@@ -189,7 +193,7 @@ export default class OTPInputView extends Component {
     }
 
     renderOneInputField = (_, index) => {
-        const { codeInputFieldStyle, codeInputHighlightStyle, secureTextEntry, keyboardType } = this.props
+        const { codeInputFieldStyle, codeInputHighlightStyle, secureTextEntry, keyboardType, editable, allowFontScaling } = this.props
         const { defaultTextFieldStyle } = styles
         const { selectedIndex, digits } = this.state
         const { clearInputs, placeholderCharacter, placeholderTextColor } = this.props
@@ -213,6 +217,8 @@ export default class OTPInputView extends Component {
                     secureTextEntry={secureTextEntry}
                     placeholder={placeholderCharacter}
                     placeholderTextColor={placeholderTextColor || defaultPlaceholderTextColor}
+                    editable={editable}
+                    allowFontScaling={allowFontScaling}
                 />
             </View>
         )
@@ -225,7 +231,7 @@ export default class OTPInputView extends Component {
     }
 
     render() {
-        const { pinCount, style, clearInputs } = this.props
+        const { pinCount, style, clearInputs, editable } = this.props
         const digits = this.getDigits()
         return (
             <View
@@ -250,6 +256,11 @@ export default class OTPInputView extends Component {
                         {this.renderTextFields()}
                     </View>
                 </TouchableWithoutFeedback>
+                
+                {
+                    !editable &&
+                    <View style={styles.notEditableOverlay}/>
+                }
             </View>
         );
     }
